@@ -1,34 +1,30 @@
-const express = require('express')
-const route = express.Router()
+const express = require("express");
+const route = express.Router();
 
-
-const {getHomepage, getTrangchu, 
-    getTintuc, postCreateUser, getCreatePage,
-    getUpdatePage,postUpdateUser, 
-    postDeleteUser, postHandleRemoveUser,
-} 
-    = require('../controllers/homeController.js')
+const {
+  getHomepage,
+  postCreateUser,
+  getCreatePage,
+  getUpdatePage,
+  postUpdateUser,
+  postDeleteUser,
+  postHandleRemoveUser,
+} = require("../controllers/homeController.js");
 
 // route.Method('/route', handler)
-route.get('/', getHomepage)
+route.get("/", getHomepage);
 //render la link
 
-route.get('/trangchu', getTrangchu)
-//send la string
+route.get("/create", getCreatePage);
 
-route.get('/tintuc', getTintuc)
+route.get("/update/:id", getUpdatePage);
 
-route.get('/create', getCreatePage)
+route.post("/create-user", postCreateUser);
 
-route.get('/update/:id', getUpdatePage)
+route.post("/update-user", postUpdateUser);
 
-route.post('/create-user', postCreateUser)
+route.post("/delete-user/:id", postDeleteUser);
 
-route.post('/update-user', postUpdateUser)
+route.post("/delete-user", postHandleRemoveUser);
 
-route.post('/delete-user/:id', postDeleteUser)
-
-route.post('/delete-user', postHandleRemoveUser)
-
-
-module.exports = route
+module.exports = route;

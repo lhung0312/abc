@@ -6,19 +6,11 @@ const {
 } = require("../services/CRUDServices");
 const connection = require("../config/database.js");
 const { use } = require("../routes/web");
+const User = require("../models/user");
 
 const getHomepage = async (req, res) => {
-  let results = await getAllUsers();
+  let results = await User.find({});
   return res.render("home.ejs", { listUsers: results });
-};
-
-const getTrangchu = (req, res) => {
-  // process data => models
-  res.send("fdsfds");
-};
-
-const getTintuc = (req, res) => {
-  res.send("fdsfds");
 };
 
 const postCreateUser = async (req, res) => {
@@ -28,30 +20,16 @@ const postCreateUser = async (req, res) => {
 
   console.log(">>> email: ", email, "name: ", Name, "City: ", City);
 
-  // connection.query(
-  //     `INSERT INTO Users (email, name, city)
-  //     VALUES (?, ?, ?);`,
-  //     [email, Name, City],
-  //     function(err, results) {
-  //       console.log(results);
-  //       res.send('create a new user succeed' )
-  //     }
-  //   );
-  //     connection.query(
-  //     'select * from Users',
-  //     function(err, results, fields) {
-  //         console.log(">>>> results = ",results);
-  //     }
-  //   );
-
-  let [results, fields] = await connection.query(
-    `INSERT INTO Users (email, name, city)
-    VALUES (?, ?, ?);`,
-    [email, Name, City]
-  );
-
-  // const [results, fields] = await connection.query('select * from Users')
-  console.log(">>>results: ", results);
+  // let [results, fields] = await connection.query(
+  //   `INSERT INTO Users (email, name, city)
+  //   VALUES (?, ?, ?);`,
+  //   [email, Name, City]
+  // );
+  await User.create({
+    email,
+    name: Name,
+    city: City,
+  }); //destructuring object
   res.send("Created user succeed");
 };
 
@@ -61,7 +39,8 @@ const getCreatePage = (req, res) => {
 
 const getUpdatePage = async (req, res) => {
   const userID = req.params.id;
-  let user = await getUserById(userID);
+  // let user = await getUserById(userID);
+  let user = await User.findById(userID).exec();
 
   res.render("edit.ejs", { userEdit: user });
 };
@@ -72,33 +51,40 @@ const postUpdateUser = async (req, res) => {
   let city = req.body.herCity;
   let userId = req.body.userId;
 
-  await updateUserById(email, city, name, userId);
+  // await updateUserById(email, city, name, userId);
+  await User.updateOne(
+    { _id: userId },
+    { name: name, email: email, city: city }
+  );
 
   // res.send("Updated user succeed");
   res.redirect("/");
 };
 
-const postDeleteUser = async (req,res) => {
+const postDeleteUser = async (req, res) => {
   const userID = req.params.id;
-  let user = await getUserById(userID);
+  let user = await User.findById(userID).exec();
 
-  res.render('delete.ejs', {userEdit: user})
-}
+  res.render("delete.ejs", { userEdit: user });
+};
 
-const postHandleRemoveUser = async (req,res) => {
-  const id = req.body.userId
+const postHandleRemoveUser = async (req, res) => {
+  const id = req.body.userId;
 
-  await deleteUserById(id)
-  
-  res.redirect('/')
-}
+  // await deleteUserById(id);
+  await User.deleteOne({
+    _id: id,
+  });
+
+  res.redirect("/");
+};
 
 module.exports = {
   getHomepage,
-  getTrangchu,
-  getTintuc,
   postCreateUser,
   getCreatePage,
-  getUpdatePage,postUpdateUser, 
-  postDeleteUser, postHandleRemoveUser, 
+  getUpdatePage,
+  postUpdateUser,
+  postDeleteUser,
+  postHandleRemoveUser,
 };

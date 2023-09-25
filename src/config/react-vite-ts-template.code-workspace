@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../../../NextJS MUI /react-vite-ts-template"
+		},
+		{
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "react-vite-ts-template"
+	}
+}
